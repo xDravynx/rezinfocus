@@ -193,12 +193,14 @@ export default function Home() {
         <p className="text-stone-400 mb-8 max-w-md mx-auto">
           Let's discuss your next commercial shoot or creative project.
         </p>
+        <p className="text-stone-400 mb-8 max-w-md mx-auto">rez@rezinfocus.com</p>
         <button 
           onClick={handleOpenModal}
           className="inline-block bg-purple-800 hover:bg-purple-700 text-stone-50 px-8 py-3 rounded-sm font-semibold tracking-wide transition-all border border-purple-600"
         >
           Contact Us
         </button>
+        
       </footer>
 
       {/* Modal Component (Kept for the footer contact button) */}
