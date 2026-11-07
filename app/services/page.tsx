@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
   Briefcase, 
   Users, 
   Sparkles,
-  Camera, // Added Camera icon for Minis
+  Camera, 
   Clock, 
-  Image as ImageIcon, 
   CheckCircle2, 
   ArrowRight,
   X
@@ -24,6 +23,7 @@ interface ServiceDetail {
   duration: string;
   deliverables: string[];
   icon: React.ReactNode;
+  images: string[]; // Image sequence for the transformation effect
 }
 
 const detailedServices: ServiceDetail[] = [
@@ -40,7 +40,8 @@ const detailedServices: ServiceDetail[] = [
       "Commercial usage rights",
       "Online delivery gallery"
     ],
-    icon: <Briefcase className="h-8 w-8 text-purple-500" />
+    icon: <Briefcase className="h-8 w-8 text-purple-500" />,
+    images: []
   },
   {
     id: "event",
@@ -53,7 +54,8 @@ const detailedServices: ServiceDetail[] = [
       "Complimentary engagement session",
       "Private digital gallery with print release"
     ],
-    icon: <Users className="h-8 w-8 text-purple-500" />
+    icon: <Users className="h-8 w-8 text-purple-500" />,
+    images: ["/wedding.png", "/wedding1.jpeg", "/wedding3.jpeg", "/wedding4.jpeg"]
   },
   {
     id: "portraiture",
@@ -68,9 +70,9 @@ const detailedServices: ServiceDetail[] = [
       "15 high-end retouched final images",
       "Style and posing guidance"
     ],
-    icon: <Sparkles className="h-8 w-8 text-purple-500" />
+    icon: <Sparkles className="h-8 w-8 text-purple-500" />,
+    images: ["/port.jpeg", "/port1.jpeg", "/port2.jpeg"]
   },
-  // Added Minis Service
   {
     id: "minis",
     title: "Minis",
@@ -84,9 +86,47 @@ const detailedServices: ServiceDetail[] = [
       "Online delivery gallery",
       "Print release included"
     ],
-    icon: <Camera className="h-8 w-8 text-purple-500" />
+    icon: <Camera className="h-8 w-8 text-purple-500" />,
+    images: ["/mini1.jpeg", "/mini2.jpeg", "/mini3.jpeg", "/mini4.jpeg", "/mini5.jpeg", "/mini6.jpeg", "/mini7.jpeg"]
   }
 ];
+
+// Sub-component to manage the transforming photo carousel effect
+function TransformingImageGallery({ images }: { images: string[] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 3500); // Changes image every 3.5 seconds
+    return () => clearInterval(interval);
+  }, [images.length]);
+
+  return (
+    <div className="w-full md:w-1/2 aspect-square md:aspect-[4/5] bg-zinc-900 rounded-sm border border-zinc-800 relative overflow-hidden group shadow-2xl">
+      {images.map((src, idx) => (
+        <div
+          key={src + idx}
+          className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+            idx === currentIndex ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-105'
+          }`}
+        >
+          <Image 
+            src={src} 
+            alt="Service transformation stage" 
+            fill
+            className="object-cover"
+          />
+        </div>
+      ))}
+      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent pointer-events-none z-20" />
+      <div className="absolute bottom-4 left-4 z-30 bg-black/60 backdrop-blur-md px-3 py-1 rounded text-xs text-stone-300 border border-white/10 flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+        Stage {currentIndex + 1} of {images.length}
+      </div>
+    </div>
+  );
+}
 
 export default function ServicesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -130,13 +170,8 @@ export default function ServicesPage() {
             key={service.id} 
             className={`flex flex-col md:flex-row gap-12 items-center ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
           >
-            {/* Image Placeholder */}
-            <div className="w-full md:w-1/2 aspect-square md:aspect-[4/5] bg-zinc-900 rounded-sm border border-zinc-800 relative overflow-hidden group">
-              <div className="absolute inset-0 flex items-center justify-center opacity-20 group-hover:opacity-40 transition-opacity">
-                <ImageIcon className="h-24 w-24 text-zinc-600" />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent" />
-            </div>
+            {/* Transforming Photo Sequence Container */}
+            <TransformingImageGallery images={service.images} />
 
             {/* Content Side */}
             <div className="w-full md:w-1/2 space-y-8">
