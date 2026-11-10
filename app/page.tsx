@@ -200,7 +200,7 @@ export default function Home() {
         >
           Contact Us
         </button>
-        <p>Made by xDravynx</p>
+        <p className="text-stone-400 mb-8 max-w-md mx-auto">Made by xDravynx</p>
       </footer>
 
       {/* Modal Component (Kept for the footer contact button) */}
